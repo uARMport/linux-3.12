@@ -161,6 +161,7 @@ void __init pxa3xx_set_u2d_info(struct pxa3xx_u2d_platform_data *info)
 }
 #endif /* CONFIG_PXA3xx */
 
+/*
 static struct resource pxafb_resources[] = {
 	[0] = {
 		.start	= 0x44000000,
@@ -192,6 +193,7 @@ void __init pxa_set_fb_info(struct device *parent, struct pxafb_mach_info *info)
 	pxa_device_fb.dev.parent = parent;
 	pxa_register_device(&pxa_device_fb, info);
 }
+*/
 
 static struct resource pxa_resource_ffuart[] = {
 	{
@@ -217,6 +219,7 @@ void __init pxa_set_ffuart_info(void *info)
 	pxa_register_device(&pxa_device_ffuart, info);
 }
 
+/*
 static struct resource pxa_resource_btuart[] = {
 	{
 		.start	= 0x40200000,
@@ -291,6 +294,7 @@ void __init pxa_set_hwuart_info(void *info)
 	else
 		pr_info("UART: Ignoring attempt to register HWUART on non-PXA255 hardware");
 }
+*/
 
 static struct resource pxai2c_resources[] = {
 	{
