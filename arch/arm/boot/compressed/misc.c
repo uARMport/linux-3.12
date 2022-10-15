@@ -16,6 +16,7 @@
  *  This allows for a much quicker boot time.
  */
 
+//#include <stdint.h>
 unsigned int __machine_arch_type;
 
 #include <linux/compiler.h>	/* for inline */
@@ -123,6 +124,42 @@ void error(char *x)
 	while(1);	/* Halt */
 }
 
+void puthex(unsigned long val){
+
+	char x[9];
+	unsigned char i, c;
+	
+	x[8] = 0;
+	
+	for(i = 0; i < 8; i++){
+		
+		c = val & 0x0F;
+		val >>= 4;
+		c = (c >= 10) ? (c + 'A' - 10) : (c + '0');
+		x[7 - i] = c;	
+	}
+	
+	putstr(x);
+}
+
+void putdec(unsigned long val){
+	
+	char x[16];
+	unsigned char i, c;
+	
+	x[sizeof(x) - 1] = 0;
+	
+	for(i = 0; i < sizeof(x) - 1; i++){
+		
+		c = (val % 10) + '0';
+		val /= 10;
+		x[sizeof(x) - 2 - i] = c;	
+		if(!val) break;
+	}
+
+	putstr(x + sizeof(x) - 2 - i);
+}
+
 asmlinkage void __div0(void)
 {
 	error("Attempting division by 0!");
@@ -145,7 +182,14 @@ decompress_kernel(unsigned long output_start, unsigned long free_mem_ptr_p,
 
 	arch_decomp_setup();
 
-	putstr("Copying Linux...");
+    putstr("Found Linux @ 0x");
+    puthex(input_data);
+    putstr(" (");
+    putdec(input_data_end - input_data);
+    putstr(" bytes). Copying to 0x");
+    puthex(output_data);
+
+	putstr("\nCopying Linux...");
 	
 	/*
 	 * You can see that this is the function that does the decompression process
