@@ -22,7 +22,7 @@ unsigned int __machine_arch_type;
 #include <linux/compiler.h>	/* for inline */
 #include <linux/types.h>
 #include <linux/linkage.h>
-#include <asm/string.h>
+//#include <asm/string.h>
 
 static void putstr(const char *ptr);
 extern void error(char *x);
@@ -167,6 +167,7 @@ asmlinkage void __div0(void)
 
 extern int do_decompress(u8 *input, int len, u8 *output, void (*error)(char *x));
 
+void *memcpy_hpc(void *__dest, __const void *__src, size_t __n);
 
 void
 decompress_kernel(unsigned long output_start, unsigned long free_mem_ptr_p,
@@ -194,14 +195,13 @@ decompress_kernel(unsigned long output_start, unsigned long free_mem_ptr_p,
 	/*
 	 * You can see that this is the function that does the decompression process
 	 * It receive the location of the compressed kernel, the length of the data, the address to output the decompressed thing, and a callback function for error handling (which we don't need in our case)
-	 * Let's just copy the uncompressed kernel to output_data location using memcpy 
+	 * Let's just copy the uncompressed kernel to output_data location using memcpy hypercall to uARM
 	 */
 	//ret = do_decompress(input_data, input_data_end - input_data,
 	//		    output_data, error);
 
-	memcpy(output_data, input_data, input_data_end - input_data);
-
-	// memcpy function is defined in <asm/string.h>, so we need to include that header
+	//memcpy(output_data, input_data, input_data_end - input_data);
+    memcpy_hpc(output_data, input_data, input_data_end - input_data);
 
 	//if (ret)
 	//	error("decompressor returned an error");
